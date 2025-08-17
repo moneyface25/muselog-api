@@ -1,4 +1,12 @@
-﻿{
+{
   "name": "muselog-api",
-  "private": true
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node api/explain.ts"
+  },
+  "dependencies": {
+    "openai": "^4.0.0"
+  }
 }
