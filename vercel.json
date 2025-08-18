@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "functions": {
+    "api/explain.ts": { "runtime": "nodejs18.x" }
+  },
+  "routes": [
+    { "src": "/api/explain", "dest": "/api/explain.ts" }
+  ]
+}
