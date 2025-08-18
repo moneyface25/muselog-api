@@ -1,13 +1,9 @@
 {
   "version": 2,
   "functions": {
-    "api/ping.js": { "runtime": "nodejs18.x" },
-    "api/explain.js": { "runtime": "nodejs18.x" },
-    "api/explain3.js": { "runtime": "nodejs18.x" }
+    "api/ping.js": { "runtime": "nodejs18.x" }
   },
   "routes": [
-    { "src": "/api/ping", "dest": "/api/ping.js" },
-    { "src": "/api/explain", "dest": "/api/explain.js" },
-    { "src": "/api/explain3", "dest": "/api/explain3.js" }
+    { "src": "/api/ping", "dest": "/api/ping.js" }
   ]
 }
