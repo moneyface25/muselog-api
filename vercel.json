@@ -1,9 +1,0 @@
-{
-  "version": 2,
-  "functions": {
-    "api/ping.js": { "runtime": "nodejs18.x" }
-  },
-  "routes": [
-    { "src": "/api/ping", "dest": "/api/ping.js" }
-  ]
-}
