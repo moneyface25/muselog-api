@@ -1,8 +1,7 @@
 {
   "name": "muselog-api",
   "private": true,
-  "type": "module",
   "dependencies": {
-    "openai": "^4.104.0"
+    "@vercel/node": "latest"
   }
 }
