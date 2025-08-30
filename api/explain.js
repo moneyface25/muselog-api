@@ -1,52 +1,61 @@
 // api/explain.js
 import OpenAI from "openai";
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      console.error("OPENAI_API_KEY is missing");
-      return res.status(500).json({ error: "OPENAI_API_KEY is missing" });
+    const { memo = "", country = "", locale = "ja" } = req.body || {};
+
+    // APIキーがない場合はフォールバックで返す
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) {
+      return res.status(200).json({
+        author: "不明",
+        era: "不明",
+        art_info: "（AIキー未設定のため、解説は生成できませんでした）",
+      });
     }
 
-    const { memo, country, title, museum, locale } = req.body ?? {};
-    const prompt = `
-出力は必ずJSONのみ:
-{"author":"…","era":"…","art_info":"…"}
-- author: 作者（不明なら"不明"）
-- era: 時代（制作年代・流派。推定可）
-- art_info: 技法・特徴・見どころ（80〜150字）
-手掛かり: タイトル:${title??""} / 美術館:${museum??""} / メモ:${memo??""} / 国:${country??""}
-`;
+    const client = new OpenAI({ apiKey: key });
 
-    const c = await client.chat.completions.create({
+    const sys = `あなたは美術史の専門家です。ユーザーのメモと国情報を手がかりに、
+以下の3項目を必ずJSONで返してください:
+- author: 作者名（不明なら"不明"）
+- era: 時代（例: ルネサンス / 印象派 / 不明）
+- art_info: 100〜200字の解説`;
+    const user = `メモ: ${memo}\n国: ${country}\n言語: ${locale}`;
+
+    const chat = await client.chat.completions.create({
       model: "gpt-4o-mini",
-      temperature: 0.7,
-      response_format: { type: "json_object" },
       messages: [
-        { role: "system", content: "出力はJSONオブジェクトのみ。前置き・後書き禁止。" },
-        { role: "user", content: prompt },
+        { role: "system", content: sys },
+        { role: "user", content: user },
       ],
+      temperature: 0.3,
     });
 
-    const text = c.choices[0]?.message?.content?.trim() || "{}";
-    let json;
-    try { json = JSON.parse(text); }
-    catch { json = { author: "不明", era: "不明", art_info: text }; }
+    const text = chat.choices?.[0]?.message?.content?.trim() || "";
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = { author: "不明", era: "不明", art_info: text || "（解説生成に失敗）" };
+    }
 
     return res.status(200).json({
-      author: json.author ?? "不明",
-      era: json.era ?? "不明",
-      art_info: json.art_info ?? "不明",
+      author: parsed.author ?? "不明",
+      era: parsed.era ?? "不明",
+      art_info: parsed.art_info ?? "（解説生成に失敗）",
     });
   } catch (e) {
-    console.error("explain error:", e);
-    return res.status(500).json({ error: "failed", detail: String(e?.message ?? e) });
+    console.error("[explain] error", e);
+    return res.status(200).json({
+      author: "不明",
+      era: "不明",
+      art_info: "（AI解説生成に失敗しました）",
+    });
   }
 }
