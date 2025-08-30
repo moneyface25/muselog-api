@@ -2,6 +2,7 @@
   "name": "muselog-api",
   "private": true,
   "dependencies": {
-    "@vercel/node": "latest"
+    "@vercel/node": "latest",
+    "openai": "^5.16.0"
   }
 }
