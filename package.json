@@ -3,6 +3,34 @@
   "private": true,
   "dependencies": {
     "@vercel/node": "latest",
-    "openai": "^5.16.0"
+    "next": "^15.5.4",
+    "openai": "^5.23.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "art-event.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -p 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moneyface25/muselog-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/moneyface25/muselog-api/issues"
+  },
+  "homepage": "https://github.com/moneyface25/muselog-api#readme",
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "@types/react": "19.1.15",
+    "typescript": "^5.9.2"
   }
 }
